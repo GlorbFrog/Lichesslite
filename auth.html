@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Auth Redirect</title>
+</head>
+<body>
+  <h2>Logging in...</h2>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get("code");
+    if (code) {
+      fetch("https://lichess.org/api/token", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams({
+          grant_type: "authorization_code",
+          code: code,
+          client_id: "lip_oaaEsgGFJUC1LM8Qsz9K",
+          redirect_uri: window.location.origin + "/auth.html"
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        localStorage.setItem("access_token", data.access_token);
+        window.location.href = "dashboard.html";
+      });
+    }
+  </script>
+</body>
+</html>
