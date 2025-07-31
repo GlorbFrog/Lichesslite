@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Dashboard</h1>
+  <div id="profile"></div>
+  <button onclick="createChallenge()">Create Game</button>
+  <div id="games"></div>
+  <script>
+    const token = localStorage.getItem("access_token");
+    if (!token) window.location.href = "/";
+
+    fetch("https://lichess.org/api/account", {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+    .then(res => res.json())
+    .then(profile => {
+      document.getElementById("profile").innerText = `Hello, ${profile.username}`;
+    });
+
+    function createChallenge() {
+      fetch("https://lichess.org/api/challenge/open", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      .then(res => res.json())
+      .then(challenge => {
+        alert("Game created! Share this link: https://lichess.org/" + challenge.challenge.id);
+        window.open("https://lichess.org/" + challenge.challenge.id, "_blank");
+      });
+    }
+  </script>
+</body>
+</html>
